@@ -28,6 +28,8 @@ model Form {
   sharedUrl    String  @default(uuid())
 
   FormSubmissions FormSubmissions[]
+
+  @@unique( [name, userId])
 }
 
 

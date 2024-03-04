@@ -21,36 +21,100 @@ import {
     FormLabel,
     FormMessage
 } from './ui/form';
-import { zodResolver } from '@hookform/resolvers/zod'
-import  * as z from 'zod';
-import { useForm } from 'react-hook-form';
 
-const formSchema = z.object({
-    name: z.string().min(4),
-    description: z.string().optional(),
-});
+
+import { useForm } from 'react-hook-form';
+import { Input } from './ui/input';
+import { Textarea } from './ui/textarea';
+import { Span } from 'next/dist/trace';
+import { toast } from './ui/use-toast';
+import { zodResolver } from '@hookform/resolvers/zod'
+import {formSchema, formSchemaType} from '@/schemas/form'
+import { CreateForm } from '@/actions/form';
+
 
 function CreateFormBtn() {
-    const form = useForm<z.infer<typeof formSchema>>({
+    const form = useForm<formSchemaType>({
         resolver: zodResolver(formSchema),
 
-    })
-  return (
-    <Dialog>
-        <DialogTrigger asChild>
-            <Button>Create new form</Button>
+    });
 
-        </DialogTrigger>
-        <DialogContent>
-            <DialogHeader>
-            <DialogTitle>Create form</DialogTitle>
-            <DialogDescription>Create new form to start collecting responses</DialogDescription>
+    async function onSubmit(values: formSchemaType) {
+        try {
+           const formId = await CreateForm(values); 
+           toast({
+            title: "Success",
+            description: "Form created successfully"
+           });
+           console.log("Form ID", formId)
+        } catch (error) {
+            toast({
+                title:"Error",
+                description:"Something went wrong, please try again",
+                variant: "destructive",
+            });
+        }
+    }
+    return (
+        <Dialog>
+            <DialogTrigger asChild>
+                <Button>Create new form</Button>
 
-            </DialogHeader>
-            <div className='flex flex-col gap-4 py-4'></div>
-        </DialogContent>
-    </Dialog>
-  )
+            </DialogTrigger>
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>Create form</DialogTitle>
+                    <DialogDescription>Create new form to start collecting responses</DialogDescription>
+
+                </DialogHeader>
+                <Form {...form}>
+                    <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-2'>
+                        <FormField
+                            control={form.control}
+                            name="name"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Name</FormLabel>
+                                    <FormControl>
+                                        <Input {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+
+                        <FormField
+                            control={form.control}
+                            name="description"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Description</FormLabel>
+                                    <FormControl>
+                                        <Textarea rows={5} {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+
+
+                    </form>
+                </Form>
+                <DialogFooter>
+                    <Button 
+                    onClick =  {
+                        form.handleSubmit(onSubmit)
+                    }
+                    disabled={form.formState.isSubmitting} className='w-full mt-4'>
+                        {!form.formState.isSubmitting && <span>Save</span>}
+                        {form.formState.isSubmitting && (
+                            <ImSpinner2 className='animate-spin'/>
+                        )}
+                    </Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
+    )
 }
 
 export default CreateFormBtn
