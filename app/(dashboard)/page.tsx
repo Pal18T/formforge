@@ -8,6 +8,9 @@ import Image from "next/image";
 import { ReactNode, Suspense } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Separator } from "@/components/ui/separator";
+import CreateFormBtn from "@/components/CreateFormBtn";
+
 
 export default function Home() {
   return (
@@ -15,8 +18,12 @@ export default function Home() {
       <Suspense fallback={<StatsCards loading={true}/>}>
         <CardStatsWrapper/>
       </Suspense>
+      <Separator className="my-6"/>
+      <h2 className="text-4xl font-bold col-span-2">Your forms</h2>
+      <Separator className="my-6"/>
+      <CreateFormBtn />
       </div>
-  )
+  );
 }
 
 async function CardStatsWrapper(){
