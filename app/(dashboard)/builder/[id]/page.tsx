@@ -1,9 +1,20 @@
+import { GetFormId } from '@/actions/form';
+import FormBuilder from '@/components/FormBuilder';
 import React from 'react'
 
-function page() {
+async function BuilderPage({params}:{
+  params: {
+    id: string;
+  }
+}) {
+  const {id} = params;
+  const form = await GetFormId(Number(id));
+  if(!form) {
+    throw new Error("form not found");
+  }
   return (
-    <div>page</div>
+    <FormBuilder form={form}/>
   )
 }
 
-export default page
+export default BuilderPage

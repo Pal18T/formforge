@@ -1,8 +1,8 @@
-import React from 'react'
+import React, { ReactNode } from 'react'
 
-function layout() {
+function layout({ children }: {children: ReactNode}) {
   return (
-    <div>layout</div>
+    <div className='flex w-full flex-grow mx-auto'>{children}</div>
   )
 }
 
