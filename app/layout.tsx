@@ -4,6 +4,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { Toaster } from "@/components/ui/toaster";
+import DesignerContextProvider from "@/components/context/DesignerContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -21,6 +22,7 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en">
         <body className={inter.className}>
+          <DesignerContextProvider>
           <ThemeProvider
             attribute="class"
             defaultTheme="system"
@@ -30,6 +32,7 @@ export default function RootLayout({
             {children}
             <Toaster />
           </ThemeProvider>
+          </DesignerContextProvider>
 
           
           </body>

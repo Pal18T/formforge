@@ -2,16 +2,22 @@
 
 import React from 'react'
 import DesignerSidebar from './DesignerSidebar'
-import { useDroppable } from '@dnd-kit/core'
+import { useDndMonitor, useDroppable } from '@dnd-kit/core'
 import { cn } from '@/lib/utils';
 import { DividerHorizontalIcon } from '@radix-ui/react-icons';
+import { FormElementInstance } from './FormElements';
+import useDesigner from './hooks/useDesigner';
 
 function Designer() {
+    const { elements, addElement} = useDesigner();
     const droppable = useDroppable({
         id: "designer-drop-area",
         data: {
             isDesignerDropArea: true,
         },
+    });
+    useDndMonitor({
+        
     })
     return (
         <div className='flex w-full h-full'>
