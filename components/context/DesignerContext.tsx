@@ -17,7 +17,7 @@ export default function DesignerContextProvider({children}: {
     const [elements,setElements] = useState<FormElementInstance[]>([]);
     const addElement = (index:number, element: FormElementInstance) => {
         setElements(prev => {
-            const newElements = {...prev};
+            const newElements = [...prev];
             newElements.splice(index, 0, element);
             return newElements;
         });

@@ -1,7 +1,7 @@
 'use client'
 
 import { MdTextFields } from "react-icons/md";
-import { ElementsType, FormElement } from "../FormElements";
+import { ElementsType, FormElement, FormElementInstance } from "../FormElements";
 
 const type: ElementsType = "TextField";
 
@@ -21,7 +21,12 @@ export const TextFieldFormElement: FormElement = {
         icon: MdTextFields,
         label: "Text Field",
     },
-    designerComponent: () => <div>Designer Component</div>,
+    designerComponent: DesignerComponent,
     formComponent: () => <div>Form Component</div>,
     propertiesComponent: () => <div>Properties Component</div>
 };
+function DesignerComponent({elementInstance}: {elementInstance: FormElementInstance}) {
+    return (
+        <div className="text-white">{elementInstance.extraAttributes?.label}</div>
+    )
+}
