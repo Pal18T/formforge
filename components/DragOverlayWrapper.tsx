@@ -36,7 +36,10 @@ if(isDesignerElement) {
     else{
         const DesignerElementComponent = FormElements[element.type].designerComponent;
 
-        node = <DesignerElementComponent elementInstance={element}/>
+        node = <div className='flex bg-accent border rounded-md h-[120px] w-full py-2 px-4 opacity-80 pointer pointer-events-none'>
+            <DesignerElementComponent elementInstance={element}/>
+
+            </div>
     }
 }
   return (
