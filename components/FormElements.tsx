@@ -14,7 +14,12 @@ export type FormElement = {
     designerComponent: React.FC<{
         elementInstance: FormElementInstance;
     }>;
-    formComponent: React.FC;
+    formComponent: React.FC<{
+        elementInstance: FormElementInstance;
+        submitValue?: SubmitFunction;
+        isInvalid?: boolean;
+        defaultValue?: string;
+    }>;
     propertiesComponent: React.FC<{
         elementInstance: FormElementInstance;
     }>;
