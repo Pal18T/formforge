@@ -96,7 +96,7 @@ function StatsCards(props: StatsCardProps) {
     </div>
   );
 }
-function StatsCard({ title, value, icon, helperText, loading, className }: {
+export function StatsCard({ title, value, icon, helperText, loading, className }: {
   title: string;
   value: string;
   helperText: string;
