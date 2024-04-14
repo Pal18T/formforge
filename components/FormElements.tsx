@@ -1,6 +1,6 @@
 import { TextFieldFormElement } from "./fields/TextField";
 
-export type ElementsType = "TextField";
+export type ElementsType = "TextField" | "TitleField";
 
 export type SubmitFunction = (key: string, value: string) => void;
 
