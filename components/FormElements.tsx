@@ -1,6 +1,11 @@
-import { TextFieldFormElement } from "./fields/TextField";
+import { ParagprahFieldFormElement } from "./fields/ParagraphField";
 
-export type ElementsType = "TextField" | "TitleField";
+import { SubTitleFieldFormElement } from "./fields/SubTitleField";
+import { TextAreaFormElement } from "./fields/TextAreaField";
+import { TextFieldFormElement } from "./fields/TextField";
+import { TitleFieldFormElement } from "./fields/TitleField";
+
+export type ElementsType = "TextField" | "TitleField" | "SubTitleField" |"ParagraphField" | "TextAreaField";
 
 export type SubmitFunction = (key: string, value: string) => void;
 
@@ -18,7 +23,7 @@ export type FormElement = {
     }>;
     formComponent: React.FC<{
         elementInstance: FormElementInstance;
-        submitValue?: (key: string, value: string) => void;
+        submitValue?: SubmitFunction;
         isInvalid?: boolean;
         defaultValue?: string;
     }>;
@@ -42,4 +47,8 @@ type FormElementsType = {
 };
 export const FormElements : FormElementsType = {
     TextField: TextFieldFormElement,
+    TitleField: TitleFieldFormElement,
+    SubTitleField: SubTitleFieldFormElement,
+    ParagraphField: ParagprahFieldFormElement,
+    TextAreaField: TextAreaFormElement,
 };
