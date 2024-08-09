@@ -23,7 +23,7 @@ const extraAttributes = {
 };
 
 const propertiesSchema = z.object({
-  title: z.string().min(2).max(500),
+  text: z.string().min(2).max(500),
   
 });
 
@@ -59,7 +59,7 @@ function DesignerComponent({ elementInstance }: { elementInstance: FormElementIn
         Paragraph field
       </Label>
       
-    <p className="truncate">{text}</p>
+    <p>{text}</p>
     </div>
   )
 }
@@ -74,7 +74,7 @@ function FormComponent({
 
   const { text } = element.extraAttributes;
   return (
-    <p className="text-muted-foreground">{text}</p>
+    <p>{text}</p>
   )
     
 }

@@ -1,4 +1,4 @@
-import { ParagprahFieldFormElement } from "./fields/ParagraphField";
+import { ParagraphFieldFormElement } from "./fields/ParagraphField";
 
 import { SubTitleFieldFormElement } from "./fields/SubTitleField";
 import { TextAreaFormElement } from "./fields/TextAreaField";
@@ -49,6 +49,6 @@ export const FormElements : FormElementsType = {
     TextField: TextFieldFormElement,
     TitleField: TitleFieldFormElement,
     SubTitleField: SubTitleFieldFormElement,
-    ParagraphField: ParagprahFieldFormElement,
+    ParagraphField: ParagraphFieldFormElement,
     TextAreaField: TextAreaFormElement,
 };
