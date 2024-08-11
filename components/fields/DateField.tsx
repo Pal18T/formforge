@@ -1,6 +1,5 @@
 'use client'
 
-
 import { ElementsType, FormElement, FormElementInstance, FormElements, SubmitFunction } from "../FormElements";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
@@ -11,21 +10,21 @@ import useDesigner from "../hooks/useDesigner";
 import { z } from "zod";
 
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
-
-import { BsTextareaResize } from "react-icons/bs";
-import { Textarea } from "../ui/textarea";
-import { cn } from "@/lib/utils";
 import { Switch } from "../ui/switch";
-import { Slider } from "../ui/slider";
+import { cn } from "@/lib/utils";
+import { BsFillCalendarDateFill } from "react-icons/bs";
+import { Button } from "../ui/button";
+import { CalendarIcon } from "@radix-ui/react-icons";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import { Calendar } from "../ui/calendar";
+import { format } from "date-fns";
 
-const type: ElementsType = "TextAreaField";
+const type: ElementsType = "DateField";
 
 const extraAttributes = {
-  label: "Text Area",
+  label: "Date Field",
   helperText: "Helper text",
   required: false,
-  placeHolder: "Value here...",
-  rows: 3,
   
 };
 
@@ -33,12 +32,10 @@ const propertiesSchema = z.object({
   label: z.string().min(2).max(50),
   helperText: z.string().max(200),
   required: z.boolean().default(false),
-  placeHolder: z.string().max(50),
-  rows: z.number().min(1).max(10),
   
 });
 
-export const TextAreaFormElement: FormElement = {
+export const DateFieldFormElement: FormElement = {
   type,
   construct: (id: string) => ({
     id,
@@ -46,8 +43,8 @@ export const TextAreaFormElement: FormElement = {
     extraAttributes,
   }),
   designerBtnElement: {
-    icon: BsTextareaResize,
-    label: "TextArea Field",
+    icon: BsFillCalendarDateFill,
+    label: "Date Field",
   },
   designerComponent: DesignerComponent,
   formComponent: FormComponent,
@@ -70,17 +67,21 @@ type CustomInstance = FormElementInstance & {
 
 function DesignerComponent({ elementInstance }: { elementInstance: FormElementInstance }) {
   const element = elementInstance as CustomInstance;
-  const { label,required, placeHolder, helperText, rows } = element.extraAttributes;
+  const { label, required, placeholder, helperText } = element.extraAttributes;
   return (
     <div className="flex flex-col gap-2 w-full">
-       <Label>
+      <Label>
         {label}
         {required && "*"}
       </Label>
-      <Textarea readOnly disabled placeholder={placeHolder} />
+      <Button variant={"outline"} className="w-full justify-start text-left font-normal">
+        <CalendarIcon className="mr-2 h-4 w-4" />
+        <span>Pick a date</span>
+
+      </Button>
       {helperText && <p className="text-muted-foreground text-[0.8rem]">{helperText}</p>}
     </div>
-  );
+  )
 }
 
 function FormComponent({
@@ -96,39 +97,55 @@ function FormComponent({
 }) {
   const element = elementInstance as CustomInstance;
 
-  const [value, setValue] = useState(defaultValue || "");
-  const [error, setError] = useState(false);
+  const [date, setDate] = useState<Date | undefined>(
+    defaultValue ? new Date(defaultValue) : undefined
+);
+  const [error, setError] = useState(false)
 
   useEffect(() => {
     setError(isInvalid === true);
   }, [isInvalid]);
 
-
-  const { label, required, placeHolder, helperText, rows } = element.extraAttributes;
+  const { label, required, placeHolder, helperText } = element.extraAttributes;
   return (
     <div className="flex flex-col gap-2 w-full">
       <Label className={cn(error && "text-red-500")}>
         {label}
         {required && "*"}
       </Label>
-      <Textarea
-        className={cn(error && "border-red-500")}
-        rows={rows}
-        placeholder={placeHolder}
-        onChange={(e) => setValue(e.target.value)}
-        onBlur={(e) => {
-          if (!submitValue) return;
-          const valid = TextAreaFormElement.validate(element, e.target.value);
-          setError(!valid);
-          if (!valid) return;
-          submitValue(element.id, e.target.value);
-        }}
-        value={value}
-      />
-      {helperText && <p className={cn("text-muted-foreground text-[0.8rem]", error && "text-red-500")}>{helperText}</p>}
+      <Popover>
+        <PopoverTrigger asChild>
+        <Button variant={"outline"} 
+        className={cn("w-full justify-start text-left font-normal", !date && "text-muted-foreground", error && "border-red-500")}
+        >
+        <CalendarIcon className="mr-2 h-4 w-4" />
+        {date ? format(date, "PPP") : <span>Pick a date</span>}
+        
+
+      </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-auto p-0" align="start">
+            <Calendar mode="single"
+            selected={date}
+            onSelect={(date) => {
+                setDate(date);
+                if(!submitValue) return;
+                const value = date?.toUTCString() || "";
+                const valid = DateFieldFormElement.validate(element, value);
+                setError(!valid);
+                submitValue(element.id, value);
+            }}
+            initialFocus
+            />
+
+        </PopoverContent>
+      </Popover>
+      {helperText &&
+        <p className={cn("text-muted-foreground text-[0.8rem]", error && "text-red-500")}>
+          {helperText}
+        </p>}
     </div>
-  );
-    
+  )
 }
 
 type propertiesFormSchemaType = z.infer<typeof propertiesSchema>;
@@ -142,8 +159,6 @@ function PropertiesComponent({ elementInstance }: { elementInstance: FormElement
       label: element.extraAttributes.label,
       helperText: element.extraAttributes.helperText,
       required: element.extraAttributes.required,
-      placeHolder: element.extraAttributes.placeHolder,
-      rows: element.extraAttributes.rows,
       
     },
   });
@@ -153,15 +168,13 @@ function PropertiesComponent({ elementInstance }: { elementInstance: FormElement
   }, [element, form]);
 
   function applyChanges(values: propertiesFormSchemaType) {
-    const { label, helperText, placeHolder, required, rows } = values;
+    const { label, helperText, required } = values;
     updateElement(element.id, {
       ...element,
       extraAttributes: {
         label,
         helperText,
-        placeHolder,
         required,
-        rows,
       },
     });
   }
@@ -180,7 +193,7 @@ function PropertiesComponent({ elementInstance }: { elementInstance: FormElement
           name="label"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Title</FormLabel>
+              <FormLabel>Label</FormLabel>
               <FormControl>
                 <Input
                   {...field}
@@ -189,11 +202,14 @@ function PropertiesComponent({ elementInstance }: { elementInstance: FormElement
                   }}
                 />
               </FormControl>
-              <FormDescription>The placeholder of the field.</FormDescription>
+              <FormDescription>
+                The label of the field. <br /> It will be displayed above the field
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
+        
         <FormField
           control={form.control}
           name="helperText"
@@ -212,27 +228,6 @@ function PropertiesComponent({ elementInstance }: { elementInstance: FormElement
                 The helper text of the field. <br />
                 It will be displayed below the field.
               </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="rows"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Rows {form.watch("rows")}</FormLabel>
-              <FormControl>
-                <Slider
-                  defaultValue={[field.value]}
-                  min={1}
-                  max={10}
-                  step={1}
-                  onValueChange={(value) => {
-                    field.onChange(value[0]);
-                  }}
-                />
-              </FormControl>
               <FormMessage />
             </FormItem>
           )}
@@ -260,3 +255,7 @@ function PropertiesComponent({ elementInstance }: { elementInstance: FormElement
     </Form>
   );
 }
+
+
+
+

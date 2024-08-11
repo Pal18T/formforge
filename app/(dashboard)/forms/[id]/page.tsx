@@ -10,7 +10,9 @@ import { TbArrowBounce } from 'react-icons/tb';
 import { StatsCard } from '../../page';
 import { ElementsType, FormElementInstance } from '@/components/FormElements';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { formatDistance } from 'date-fns';
+import { format, formatDistance } from 'date-fns';
+import { Badge } from '@/components/ui/badge';
+import { Checkbox } from '@/components/ui/checkbox';
 
 
 async function FormDetailPage({params}:{
@@ -114,6 +116,12 @@ async function SubmissionsTable({ id }: { id: number }) {
   formElements.forEach(element => {
     switch(element.type) {
       case "TextField":
+        case "NumberField":
+          case "TextAreaField":
+            case "DateField":
+              case "SelectField":
+                case "CheckboxField":
+
         columns.push({
           id: element.id,
           label: element.extraAttributes?.label,
@@ -177,6 +185,17 @@ function RowCell({type, value}: {
   value:string 
 }){
   let node: ReactNode = value;
+
+  switch (type) {
+    case "DateField":
+      if(!value) break;
+      const date = new Date(value);
+      node = <Badge variant={"outline"}>{format(date, "dd/MM/yyyy")}</Badge>;
+      break;
+      case "CheckboxField":
+        const checked = value === "true";
+        node = <Checkbox checked={checked} disabled />
+  }
 
   
   return <TableCell>{node}</TableCell>
